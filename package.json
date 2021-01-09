@@ -1,0 +1,34 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "[![Actions Status](https://github.com/artem-prygin/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/artem-prygin/frontend-project-lvl3/actions)",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest": "^24.1.3",
+    "html-webpack-plugin": "^4.5.1",
+    "webpack": "^5.12.2",
+    "webpack-cli": "^4.3.1",
+    "webpack-dev-server": "^3.11.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/artem-prygin/frontend-project-lvl3.git"
+  },
+  "author": "Artem Prygin <aprygin@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/artem-prygin/frontend-project-lvl3/issues"
+  },
+  "homepage": "https://github.com/artem-prygin/frontend-project-lvl3#readme"
+}
