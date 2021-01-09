@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/artem-prygin/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/artem-prygin/frontend-project-lvl3/actions)",
+  "description": "",
   "main": "index.js",
   "dependencies": {
     "bootstrap": "^4.5.3",
