@@ -5,8 +5,12 @@
   "dependencies": {
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
+    "i18next": "^19.8.4",
     "jquery": "^3.5.1",
-    "popper.js": "^1.16.1"
+    "lodash": "^4.17.20",
+    "on-change": "^2.2.2",
+    "popper.js": "^1.16.1",
+    "yup": "^0.32.8"
   },
   "devDependencies": {
     "css-loader": "^5.0.1",
