@@ -30,7 +30,7 @@ export const watcher = onChange(state, (path, value) => {
         break;
       case 'submitted':
         nodes.submitBtn.setAttribute('disabled', 'disabled');
-        nodes.rssWrapper.innerHTML = '<img src="../assets/loading.gif" alt="loading">';
+        nodes.rssWrapper.innerHTML = '<img src="assets/loading.gif" alt="loading">';
         break;
       case 'success':
         handleSuccess(i18n.t(`feedbackMsg.${state.feedbackMsg}`));

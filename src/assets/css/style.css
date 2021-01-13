@@ -40,6 +40,7 @@
     animation: joke 10s 2s forwards;
 }
 
+
 @keyframes joke {
     from {
         left: -100%;
