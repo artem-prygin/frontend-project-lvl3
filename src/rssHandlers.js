@@ -5,6 +5,13 @@ import render from './render.js';
 
 const corsLink = 'https://api.allorigins.win/get?url=';
 
+const addItems = (items, channelID) => {
+  const startId = state.items.length > 0 ? _.last(state.items).id + 1 : 1;
+  const itemsWithID = items
+    .map((item, i) => ({ ...item, id: i + startId, channelID }));
+  state.items = [...state.items, ...itemsWithID];
+};
+
 export const parseRss = (rss) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(rss, 'application/xml');
@@ -39,11 +46,8 @@ const updateRss = (url, id) => {
       const currentLinks = currentItems.map(({ link }) => link);
       const newFeed = feed.itemsData.filter(({ link }) => !currentLinks.includes(link));
       if (newFeed.length > 0) {
-        const lastItem = _.last(currentItems);
-        const lastID = lastItem.id;
-        const { channelID } = lastItem;
-        const itemsWithID = newFeed.map((item) => ({ ...item, id: lastID + 1, channelID }));
-        state.items = [...state.items, ...itemsWithID];
+        const { channelID } = _.last(currentItems);
+        addItems(newFeed, channelID);
         render(state);
       }
     })
@@ -59,10 +63,7 @@ export const addRSS = (url, data) => {
   const channelID = state.channels.length ? state.channels.length + 1 : 1;
   state.channels.push({ title: data.channelTitle, id: channelID });
   state.currentChannelID = channelID;
-  const startId = state.items.length > 0 ? _.last(state.items).id + 1 : 1;
-  const itemsWithID = data.itemsData
-    .map((item, i) => ({ ...item, id: i + startId + 1, channelID }));
-  state.items = [...state.items, ...itemsWithID];
+  addItems(data.itemsData, channelID);
   setTimeout(() => {
     updateRss(url, channelID);
   }, 5000);
