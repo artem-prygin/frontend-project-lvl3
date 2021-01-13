@@ -1,4 +1,4 @@
-# RSS Header
+# RSS Reeder
 The easiest way to follow news from your favorite websites and blogs.
 * * *
 [![Actions Status](https://github.com/artem-prygin/frontend-project-lvl3/workflows/hexlet-check/badge.svg)](https://github.com/artem-prygin/frontend-project-lvl3/actions)
