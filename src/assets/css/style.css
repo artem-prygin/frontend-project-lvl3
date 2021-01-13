@@ -31,26 +31,3 @@
     height: 30px;
     width: 100%;
 }
-
-.joke {
-    position: absolute;
-    top: 0;
-    left: -100%;
-    z-index: 1;
-    animation: joke 10s 2s forwards;
-}
-
-@keyframes joke {
-    from {
-        left: -100%;
-    }
-    20% {
-        left: 0;
-    }
-    80% {
-        left: 0;
-    }
-    100% {
-        left: -100%;
-    }
-}

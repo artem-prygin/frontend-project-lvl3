@@ -3,7 +3,6 @@ import { i18nObj as i18n, translate } from './languagesHandler.js';
 import { handleError, handleSuccess, clearFields } from './feedbackHandler.js';
 import render from './render.js';
 import nodes from './DOMelements.js';
-import { loadingGif } from './index.js';
 
 export const state = {
   urls: [],
@@ -31,7 +30,7 @@ export const watcher = onChange(state, (path, value) => {
         break;
       case 'submitted':
         nodes.submitBtn.setAttribute('disabled', 'disabled');
-        nodes.rssWrapper.innerHTML = `<img src="${loadingGif}" alt="loading">`;
+        nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
         break;
       case 'success':
         handleSuccess(i18n.t(`feedbackMsg.${state.feedbackMsg}`));
