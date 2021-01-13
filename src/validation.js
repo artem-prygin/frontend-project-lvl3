@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import _ from 'lodash';
-import { i18nObj as i18n } from './languagesHandler.js';
+import { i18nObj as i18n } from './translationHandlers.js';
 
 yup.setLocale({
   mixed: {

@@ -3,6 +3,8 @@ export default {
     description: '¡Empiece a leer RSS hoy! Es simple, es hermoso.',
     exampleUrl: 'Ejemplo',
     submitBtn: 'Añadir',
+    closeModalBtn: 'Cerrar',
+    openFullArticle: 'Leer completamente',
     rss: {
       channelsTitle: 'Canales',
       feedTitle: 'RSS Feed',

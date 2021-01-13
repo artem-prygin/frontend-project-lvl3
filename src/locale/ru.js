@@ -3,6 +3,8 @@ export default {
     description: 'Начните читать RSS уже сегодня! Это просто, это прекрасно.',
     exampleUrl: 'Пример',
     submitBtn: 'Добавить',
+    closeModalBtn: 'Закрыть',
+    openFullArticle: 'Читать целиком',
     rss: {
       channelsTitle: 'Каналы',
       feedTitle: 'RSS Лента',

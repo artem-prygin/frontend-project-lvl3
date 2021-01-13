@@ -1,8 +1,11 @@
 import onChange from 'on-change';
-import { i18nObj as i18n, translate } from './languagesHandler.js';
-import { handleError, handleSuccess, clearFields } from './feedbackHandler.js';
-import render from './render.js';
-import nodes from './DOMelements.js';
+import { i18nObj as i18n, translate } from './translationHandlers.js';
+import {
+  handleError,
+  handleSuccess,
+  clearFields,
+  showLoading,
+} from './feedbackHandler.js';
 
 export const state = {
   urls: [],
@@ -25,20 +28,16 @@ export const watcher = onChange(state, (path, value) => {
         translate(state);
         break;
       case 'filling':
-        clearFields();
-        state.feedbackMsg = null;
+        clearFields(state);
         break;
       case 'submitted':
-        nodes.submitBtn.setAttribute('disabled', 'disabled');
-        nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
+        showLoading();
         break;
       case 'success':
-        handleSuccess(i18n.t(`feedbackMsg.${state.feedbackMsg}`));
-        render(state);
+        handleSuccess(state, i18n.t(`feedbackMsg.${state.feedbackMsg}`));
         break;
       case 'failure':
-        handleError(i18n.t(`feedbackMsg.${state.feedbackMsg}`));
-        render(state);
+        handleError(state, i18n.t(`feedbackMsg.${state.feedbackMsg}`));
         break;
       default:
         break;

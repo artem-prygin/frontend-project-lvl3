@@ -4,6 +4,8 @@ export default {
     exampleUrl: 'Example',
     submitBtn: 'Add',
     placeholder: 'Rss Link',
+    closeModalBtn: 'Close',
+    openFullArticle: 'Full Article',
     rss: {
       channelsTitle: 'Channels',
       feedTitle: 'RSS Feed',

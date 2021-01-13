@@ -1,27 +1,35 @@
-const urlInput = document.querySelector('input[name="url"]');
-const feedbackField = document.querySelector('.feedback');
-const submitBtn = document.querySelector('button');
+import nodes from './DOMelements.js';
+import render from './render.js';
 
-export const handleError = (errorMessage) => {
-  urlInput.classList.add('is-invalid');
-  feedbackField.classList.remove('text-success');
-  feedbackField.classList.add('text-danger');
-  feedbackField.textContent = errorMessage;
-  submitBtn.removeAttribute('disabled');
+export const handleError = (state, errorMessage) => {
+  nodes.input.classList.add('is-invalid');
+  nodes.feedbackField.classList.remove('text-success');
+  nodes.feedbackField.classList.add('text-danger');
+  nodes.feedbackField.textContent = errorMessage;
+  nodes.submitBtn.removeAttribute('disabled');
+  render(state);
 };
 
-export const handleSuccess = (successMessage) => {
-  urlInput.classList.remove('is-invalid');
-  feedbackField.classList.remove('text-danger');
-  feedbackField.classList.add('text-success');
-  feedbackField.textContent = successMessage;
-  submitBtn.removeAttribute('disabled');
+export const handleSuccess = (state, successMessage) => {
+  nodes.input.classList.remove('is-invalid');
+  nodes.feedbackField.classList.remove('text-danger');
+  nodes.feedbackField.classList.add('text-success');
+  nodes.feedbackField.textContent = successMessage;
+  nodes.submitBtn.removeAttribute('disabled');
+  render(state);
 };
 
-export const clearFields = () => {
-  urlInput.classList.remove('is-invalid');
-  feedbackField.classList.remove('text-danger');
-  feedbackField.classList.remove('text-success');
-  feedbackField.textContent = '';
-  submitBtn.removeAttribute('disabled');
+export const clearFields = (state) => {
+  nodes.input.classList.remove('is-invalid');
+  nodes.feedbackField.classList.remove('text-danger');
+  nodes.feedbackField.classList.remove('text-success');
+  nodes.feedbackField.textContent = '';
+  nodes.submitBtn.removeAttribute('disabled');
+  const newState = state;
+  newState.feedbackMsg = null;
+};
+
+export const showLoading = () => {
+  nodes.submitBtn.setAttribute('disabled', 'disabled');
+  nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
 };

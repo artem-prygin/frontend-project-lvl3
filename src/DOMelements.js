@@ -7,4 +7,8 @@ export default {
   siteDescription: document.querySelector('.site-description'),
   exampleUrl: document.querySelector('.example-url'),
   feedbackField: document.querySelector('.feedback'),
+  modalTitle: document.querySelector('.modal-title'),
+  modalBody: document.querySelector('.modal-body'),
+  openFullArticle: document.querySelector('.open-full-article'),
+  closeModalBtn: document.querySelector('.close-modal-btn'),
 };

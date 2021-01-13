@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { watcher, state } from './watcher.js';
 import validateForm from './validation.js';
 import nodes from './DOMelements.js';
-import { getRss, addRSS } from './rssHandler.js';
+import { getRss, addRSS } from './rssHandlers.js';
 
 export default () => {
   watcher.formState = 'initializing';
@@ -45,15 +45,15 @@ export default () => {
       });
   });
 
-  nodes.languages.forEach((language) => {
-    language.addEventListener('click', () => {
+  nodes.languages.forEach((lang) => {
+    lang.addEventListener('click', () => {
       const active = document.querySelector('.language-active');
-      if (active === language) {
+      if (active === lang) {
         return;
       }
       active.classList.remove('language-active');
-      language.classList.add('language-active');
-      watcher.lng = language.dataset.lng;
+      lang.classList.add('language-active');
+      watcher.lng = lang.dataset.lng;
     });
   });
 };
