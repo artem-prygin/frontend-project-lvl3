@@ -11,8 +11,13 @@ export default (rss) => {
     const title = item.querySelector('title').textContent;
     const description = item.querySelector('description').textContent;
     const link = item.querySelector('link').textContent;
-    return { title, description, link };
+    const guid = item.querySelector('guid').textContent;
+    return {
+      title,
+      description,
+      link,
+      guid,
+    };
   });
-  console.log({ channelTitle, itemsData });
   return { channelTitle, itemsData };
 };

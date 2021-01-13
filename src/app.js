@@ -1,10 +1,8 @@
-import axios from 'axios';
 import _ from 'lodash';
-import parser from './parser.js';
-import { watcher, validateForm, addRSS } from './watcher.js';
+import { watcher, state } from './watcher.js';
+import validateForm from './validation.js';
 import nodes from './DOMelements.js';
-
-const corsLink = 'https://api.allorigins.win/get?url=';
+import { getRss, addRSS } from './rssHandler.js';
 
 export default () => {
   watcher.formState = 'initializing';
@@ -22,16 +20,15 @@ export default () => {
       return;
     }
 
-    if (watcher.urls.includes(url)) {
+    if (state.urls.includes(url)) {
       watcher.feedbackMsg = 'inTheList';
       watcher.formState = 'failure';
       return;
     }
 
     watcher.formState = 'submitted';
-    axios.get(`${corsLink}${encodeURIComponent(url)}`)
-      .then((res) => {
-        const feed = parser(res.data.contents);
+    getRss(url)
+      .then((feed) => {
         if (_.isEqual(feed, {})) {
           watcher.feedbackMsg = 'noRss';
           watcher.formState = 'failure';

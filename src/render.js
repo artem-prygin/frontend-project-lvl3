@@ -13,6 +13,23 @@ const generateItemsList = (items) => items.map(({ title }) => `
   </li>
 `).join('');
 
+const generateRssTemplate = (currentItems, channels, currentChannelID) => `
+  <div class="row">
+    <div class="col-md-3">
+        <h2 id="channelsTitle">${i18n.t('rss.channelsTitle')}</h2>
+        <ul class="list-group channels-list">
+           ${generateChannelsList(channels, currentChannelID)}
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <h2 id="feedTitle">${i18n.t('rss.feedTitle')}</h2>
+        <ul class="list-group items-list">
+            ${generateItemsList(currentItems)}
+        </ul>
+    </div>
+  </div>
+`;
+
 const render = (state) => {
   const currentState = state;
   const { currentChannelID, items, channels } = state;
@@ -21,20 +38,7 @@ const render = (state) => {
     return;
   }
   const currentItems = items.filter((item) => item.channelID === currentChannelID);
-  nodes.rssWrapper.innerHTML = `<div class="row">
-        <div class="col-md-3">
-            <h2 id="channelsTitle">${i18n.t('rss.channelsTitle')}</h2>
-            <ul class="list-group channels-list">
-               ${generateChannelsList(channels, currentChannelID)}
-            </ul>
-        </div>
-        <div class="col-md-9">
-            <h2 id="feedTitle">${i18n.t('rss.feedTitle')}</h2>
-            <ul class="list-group items-list">
-                ${generateItemsList(currentItems)}
-            </ul>
-        </div>
-    </div>`;
+  nodes.rssWrapper.innerHTML = generateRssTemplate(currentItems, channels, currentChannelID);
 
   const channelListNode = document.querySelector('.channels-list');
   const channelNodes = channelListNode.querySelectorAll('.list-group-item');
