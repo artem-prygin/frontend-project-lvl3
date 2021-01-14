@@ -1,6 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
+  "main": "./src/index.js",
   "description": "",
   "dependencies": {
     "axios": "^0.21.1",
