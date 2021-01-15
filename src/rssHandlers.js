@@ -1,70 +1,54 @@
 import axios from 'axios';
 import _ from 'lodash';
-import { state } from './watcher.js';
-import render from './render.js';
+import parser from './parser.js';
 
-const corsLink = 'https://api.allorigins.win/get?url=';
+export const corsLink = 'https://api.allorigins.win/get?url=';
 
-const addItems = (items, channelID) => {
-  const startId = state.items.length > 0 ? _.last(state.items).id + 1 : 1;
-  const itemsWithID = items
-    .map((item, i) => ({ ...item, id: i + startId, channelID }));
-  state.items = [...state.items, ...itemsWithID];
+const addIds = (items, channelID) => items.map((item) => (
+  { ...item, id: _.uniqueId(), channelID }
+));
+
+const addItems = (watcher, items, channelID) => {
+  const itemsWithID = addIds(items, channelID);
+  const newWatcher = watcher;
+  newWatcher.items = [...watcher.items, ...itemsWithID];
 };
 
-export const parseRss = (rss) => {
-  const parser = new DOMParser();
-  const data = parser.parseFromString(rss, 'application/xml');
-  const isValidRSS = data.querySelector('rss') !== null;
-  if (!isValidRSS) {
-    return {};
-  }
-  const channelTitle = data.querySelector('channel > title').textContent;
-  const items = data.querySelectorAll('item');
-  const itemsData = [...items].map((item) => {
-    const title = item.querySelector('title').textContent;
-    const description = item.querySelector('description').textContent;
-    const link = item.querySelector('link').textContent;
-    return {
-      title,
-      description,
-      link,
-      viewed: false,
-    };
-  });
-  return { channelTitle, itemsData };
-};
-
-export const getRss = (url) => axios.get(`${corsLink}${encodeURIComponent(url)}`)
-  .then((res) => parseRss(res.data.contents))
-  .catch(console.error);
-
-const updateRss = (url, id) => {
-  getRss(url)
-    .then((feed) => {
-      const currentItems = state.items.filter(({ channelID }) => channelID === id);
-      const currentLinks = currentItems.map(({ link }) => link);
-      const newFeed = feed.itemsData.filter(({ link }) => !currentLinks.includes(link));
-      if (newFeed.length > 0) {
-        const { channelID } = _.last(currentItems);
-        addItems(newFeed, channelID);
-        render(state);
-      }
+export const updateRss = (watcher) => {
+  const items = watcher.channels.flatMap(({ id: channelID, url }) => axios
+    .get(`${corsLink}${encodeURIComponent(url)}`)
+    .then((res) => {
+      const newWatcher = watcher;
+      const { itemsData } = parser(res.data.contents);
+      const itemsDataWithIds = addIds(itemsData, channelID);
+      const { items: currentItems } = newWatcher;
+      newWatcher.items = _.unionBy(currentItems, itemsDataWithIds, 'link');
     })
-    .catch(console.error);
+    .catch(console.error));
 
-  setTimeout(() => {
-    updateRss(url, id);
-  }, 5000);
+  Promise.all(items)
+    .then((res) => {
+      setTimeout(() => {
+        updateRss(watcher);
+      }, 5000);
+
+      if (res.length === 0) {
+        return;
+      }
+      const newWatcher = watcher;
+      newWatcher.lastRssUpdate = new Date();
+    });
 };
 
-export const addRSS = (url, data) => {
-  state.urls.push(url);
-  const channelID = state.channels.length ? state.channels.length + 1 : 1;
-  state.channels.push({ title: data.channelTitle, id: channelID });
-  state.currentChannelID = channelID;
-  addItems(data.itemsData, channelID);
-  setTimeout(() => {
-    updateRss(url, channelID);
-  }, 5000);
+export const addRSS = (watcher, url, data) => {
+  const newWatcher = watcher;
+  const channelID = _.uniqueId('channel');
+  newWatcher.channels.push({
+    id: channelID,
+    title: data.channelInfo.chTitle,
+    description: data.channelInfo.chDescription,
+    url,
+  });
+  newWatcher.currentChannelID = channelID;
+  addItems(newWatcher, data.itemsData, channelID);
 };

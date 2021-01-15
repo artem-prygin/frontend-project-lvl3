@@ -1,16 +1,4 @@
-.languages {
-    margin: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.language {
-    margin: 0 10px;
-    width: 50px;
-    position: relative;
-    cursor: pointer;
-}
+@import '~bootstrap';
 
 .language::after {
     content: '';
@@ -25,9 +13,4 @@
 
 .language-active::after, .language:hover::after {
     background-color: transparent;
-}
-
-.language img {
-    height: 30px;
-    width: 100%;
 }

@@ -11,13 +11,16 @@ export default {
       feedTitle: 'RSS Feed',
       openModalBtn: 'Open',
     },
-    feedbackMsg: {
+    messages: {
+      successMsg: 'RSS has been loaded',
+      loadingMsg: 'Loading...',
+    },
+    errors: {
       url: 'Must be valid URL',
       required: 'This field is required',
       inTheList: 'Channel is already in the list',
       noRss: 'This source doesn\'t contain valid rss',
       networkError: 'Network Error',
-      successMsg: 'RSS has been loaded',
     },
   },
 };

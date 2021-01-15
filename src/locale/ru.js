@@ -10,13 +10,16 @@ export default {
       feedTitle: 'RSS Лента',
       openModalBtn: 'Открыть',
     },
-    feedbackMsg: {
+    errors: {
       url: 'Введите валидный url',
       required: 'Поле обязательно для заполнения',
       inTheList: 'Данный RSS-канал уже добавлен',
       noRss: 'Данный ресурс не содержит RSS',
       networkError: 'Сеть недоступна',
+    },
+    messages: {
       successMsg: 'RSS был успешно загружен',
+      loadingMsg: 'Загрузка...',
     },
   },
 };

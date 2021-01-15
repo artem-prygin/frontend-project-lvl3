@@ -19,6 +19,13 @@ export const handleSuccess = (state, successMessage) => {
   render(state);
 };
 
+export const handleLoading = (loadingMessage) => {
+  nodes.feedbackField.classList.remove('text-danger', 'text-success');
+  nodes.feedbackField.textContent = loadingMessage;
+  nodes.submitBtn.setAttribute('disabled', 'disabled');
+  nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
+};
+
 export const clearFields = (state) => {
   nodes.input.classList.remove('is-invalid');
   nodes.feedbackField.classList.remove('text-danger');
@@ -27,9 +34,4 @@ export const clearFields = (state) => {
   nodes.submitBtn.removeAttribute('disabled');
   const newState = state;
   newState.feedbackMsg = null;
-};
-
-export const showLoading = () => {
-  nodes.submitBtn.setAttribute('disabled', 'disabled');
-  nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
 };

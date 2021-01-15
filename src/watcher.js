@@ -1,26 +1,21 @@
 import onChange from 'on-change';
-import { i18nObj as i18n, translate } from './translationHandlers.js';
+import i18n from 'i18next';
+import translate from './translation.js';
 import {
   handleError,
   handleSuccess,
+  handleLoading,
   clearFields,
-  showLoading,
 } from './feedbackHandlers.js';
+import render from './render.js';
 
-export const state = {
-  urls: [],
-  channels: [],
-  items: [],
-  currentChannelID: null,
-  formState: '',
-  lng: i18n.language,
-  feedbackMsg: null,
-};
-
-export const watcher = onChange(state, (path, value) => {
+const watchState = (state) => onChange(state, (path, value) => {
   if (path === 'lng') {
     i18n.changeLanguage(value);
     translate(state);
+  }
+  if (path === 'lastRssUpdate') {
+    render(state);
   }
   if (path === 'formState') {
     switch (value) {
@@ -31,16 +26,18 @@ export const watcher = onChange(state, (path, value) => {
         clearFields(state);
         break;
       case 'submitted':
-        showLoading();
+        handleLoading(i18n.t('messages.loadingMsg'));
         break;
       case 'success':
-        handleSuccess(state, i18n.t(`feedbackMsg.${state.feedbackMsg}`));
+        handleSuccess(state, i18n.t('messages.successMsg'));
         break;
       case 'failure':
-        handleError(state, i18n.t(`feedbackMsg.${state.feedbackMsg}`));
+        handleError(state, i18n.t(`errors.${state.error}`));
         break;
       default:
         break;
     }
   }
 });
+
+export default watchState;

@@ -1,5 +1,5 @@
+import i18n from 'i18next';
 import nodes from './DOMelements.js';
-import { i18nObj as i18n } from './translationHandlers.js';
 
 const setModalInfo = (item) => {
   nodes.modalTitle.textContent = item.title;
@@ -7,16 +7,20 @@ const setModalInfo = (item) => {
   nodes.openFullArticle.href = item.link;
 };
 
-const generateChannelsList = (channels, activeID) => channels.map(({ title, id }) => {
-  const activeClass = id === activeID ? 'active' : '';
-  return `<li class="list-group-item ${activeClass}" data-id="${id}" role="button">${title}</li>`;
+const generateChannelsList = (channels, activeID) => channels.map((channel) => {
+  const activeClass = channel.id === activeID ? 'active' : '';
+  return `<li class="list-group-item ${activeClass}" data-id="${channel.id}" role="button">
+            <h4>${channel.title}</h4>
+            <small>${channel.description}</small>
+        </li>`;
 }).join('');
 
 const generateItemsList = (items) => items.map(({ id, title, viewed }) => {
   const fontWeightClass = viewed ? 'font-weight-normal' : 'font-weight-bold';
+  const btnClass = viewed ? 'btn-secondary' : 'btn-primary ';
   return `<li class="list-group-item d-flex justify-content-between align-items-start">
     <h5 class="${fontWeightClass}">${title}</h5>
-    <button class="btn btn-primary modal-open" data-item-id="${id}"
+    <button class="btn ${btnClass} modal-open" data-item-id="${id}"
         data-toggle="modal" data-target="#item-modal">${i18n.t('rss.openModalBtn')}</button>
   </li>`;
 }).join('');
@@ -41,8 +45,8 @@ const generateRssTemplate = (currentItems, channels, currentChannelID) => `
 const clickOpenModalBtn = (state, render, btn) => {
   btn.addEventListener('click', () => {
     const { itemId } = btn.dataset;
-    const item = state.items.find(({ id }) => id === +itemId);
-    const index = state.items.findIndex(({ id }) => id === +itemId);
+    const item = state.items.find(({ id }) => id === itemId);
+    const index = state.items.findIndex(({ id }) => id === itemId);
     setModalInfo(item);
     if (!state.items[index].viewed) {
       const newState = state;
@@ -54,9 +58,9 @@ const clickOpenModalBtn = (state, render, btn) => {
 
 const clickChannel = (state, render, channel) => {
   channel.addEventListener('click', () => {
-    if (state.currentChannelID !== +channel.dataset.id) {
+    if (state.currentChannelID !== channel.dataset.id) {
       const newState = state;
-      newState.currentChannelID = +channel.dataset.id;
+      newState.currentChannelID = channel.dataset.id;
       render(newState);
     }
   });
@@ -68,7 +72,9 @@ const render = (state) => {
     nodes.rssWrapper.textContent = '';
     return;
   }
-  const currentItems = items.filter((item) => item.channelID === currentChannelID);
+  const currentItems = items
+    .filter((item) => item.channelID === currentChannelID)
+    .sort((a, b) => b.id - a.id);
   nodes.rssWrapper.innerHTML = generateRssTemplate(currentItems, channels, currentChannelID);
 
   const channelListNode = document.querySelector('.channels-list');

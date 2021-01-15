@@ -10,13 +10,16 @@ export default {
       feedTitle: 'RSS Feed',
       openModalBtn: 'Mirar',
     },
-    feedbackMsg: {
+    errors: {
       url: 'Ingrese una URL válida',
       required: 'Requerido para llenar',
       inTheList: 'Este feed RSS ya se ha agregado',
       noRss: 'Este recurso no contiene RSS',
       networkError: 'Internet no está disponible',
+    },
+    messages: {
       successMsg: 'RSS se agregó exitosamente',
+      loadingMsg: 'Cargando...',
     },
   },
 };
