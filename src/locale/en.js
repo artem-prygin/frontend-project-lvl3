@@ -6,6 +6,7 @@ export default {
     placeholder: 'Rss Link',
     closeModalBtn: 'Close',
     openFullArticle: 'Full Article',
+    createdBy: 'Created by',
     rss: {
       channelsTitle: 'Channels',
       feedTitle: 'RSS Feed',

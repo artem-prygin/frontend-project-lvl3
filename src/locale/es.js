@@ -5,6 +5,7 @@ export default {
     submitBtn: 'Añadir',
     closeModalBtn: 'Cerrar',
     openFullArticle: 'Leer completamente',
+    createdBy: 'Creado por',
     rss: {
       channelsTitle: 'Canales',
       feedTitle: 'RSS Feed',

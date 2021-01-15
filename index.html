@@ -7,7 +7,7 @@
     <title>RSS Reader</title>
     <link rel="icon" href="https://miro.medium.com/max/60/1*V-vZvfXcW5Plgk3ABlorHQ.png" type="image/png">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 <div class="modal fade" id="item-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -28,58 +28,62 @@
     </div>
 </div>
 
-<section class="container-fluid bg-dark p-5">
-    <div class="row">
-        <div class="languages d-flex align-items-center justify-content-center ml-auto mr-auto mb-4"
-             style="width: 165px">
-            <div class="language language-active position-relative ml-2" data-lng="en" role="button">
-                <div class="position-absolute w-100 h-100"></div>
-                <img src="https://www.flagistrany.ru/data/flags/w580/gb.webp" alt="EN" width="50" height="30">
-            </div>
-            <div class="language position-relative ml-2 mr-2" data-lng="ru" role="button">
-                <img src="https://www.flagistrany.ru/data/flags/w580/ru.webp" alt="RU" width="50" height="30">
-            </div>
-            <div class="language position-relative mr-2" data-lng="es" role="button">
-                <img src="https://www.flagistrany.ru/data/flags/w580/es.webp" alt="ES" width="50" height="30">
-            </div>
-
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-10 col-lg-8 mx-auto text-white">
-            <h1 class="display-3">RSS Reader</h1>
-            <p class="lead site-description"></p>
-            <form action="" class="rss-form">
-                <div class="form-row">
-                    <div class="col">
-                        <input autofocus="" required="" name="url" aria-label="url" type="url"
-                               class="form-control form-control-lg w-100"
-                               placeholder="https://ru.hexlet.io/lessons.rss">
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" name="add" aria-label="add" class="btn btn-lg btn-primary px-sm-5"></button>
-                    </div>
+<main class="flex-grow-1">
+    <section class="container-fluid bg-dark p-5">
+        <div class="row">
+            <div class="languages d-flex align-items-center justify-content-center ml-auto mr-auto mb-4"
+                 style="width: 165px">
+                <div class="language language-active position-relative ml-2" data-lng="en" role="button">
+                    <div class="position-absolute w-100 h-100"></div>
+                    <img src="https://www.flagistrany.ru/data/flags/w580/gb.webp" alt="EN" width="50" height="30">
                 </div>
-            </form>
-            <p class="text-muted my-1"><span class="example-url"></span>: https://ru.hexlet.io/lessons.rss</p>
-            <div class="feedback"></div>
+                <div class="language position-relative ml-2 mr-2" data-lng="ru" role="button">
+                    <img src="https://www.flagistrany.ru/data/flags/w580/ru.webp" alt="RU" width="50" height="30">
+                </div>
+                <div class="language position-relative mr-2" data-lng="es" role="button">
+                    <img src="https://www.flagistrany.ru/data/flags/w580/es.webp" alt="ES" width="50" height="30">
+                </div>
+
+            </div>
         </div>
-    </div>
-</section>
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto text-white">
+                <h1 class="display-3">RSS Reader</h1>
+                <p class="lead site-description"></p>
+                <form action="" class="rss-form">
+                    <div class="form-row">
+                        <div class="col">
+                            <input autofocus="" required="" name="url" aria-label="url" type="url"
+                                   class="form-control form-control-lg w-100"
+                                   placeholder="https://ru.hexlet.io/lessons.rss">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" aria-label="add" class="btn btn-lg btn-primary px-sm-5"></button>
+                        </div>
+                    </div>
+                </form>
+                <p class="text-muted my-1"><span class="example-url"></span>: https://ru.hexlet.io/lessons.rss</p>
+                <div class="feedback"></div>
+            </div>
+        </div>
+    </section>
 
-<section class="container mt-5 mb-5 rss-wrapper">
+    <section class="container mt-5 mb-5 rss-wrapper">
 
-</section>
+    </section>
+</main>
 
 <footer class="footer border-top py-3 mt-5">
     <div class="container-xl">
-        <div class="text-center">created by
+        <div class="text-center mb-2">
+            <span class="created-by"></span>:
             <a href="https://vk.com/gribgribych" target="_blank">Artem Prygin</a>
         </div>
         <div class="text-center">
-            <a class="d-flex align-items-center justify-content-center" href="https://vk.com/gribgribych" target="_blank">
+            <a class="d-flex align-items-end justify-content-center" href="https://vk.com/gribgribych"
+               target="_blank">
                 <img src="https://image.flaticon.com/icons/png/512/25/25231.png" alt="GitHub" width="30">
-                <span>GitHub</span>
+                <span class="ml-1">GitHub</span>
             </a>
         </div>
     </div>

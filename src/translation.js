@@ -23,6 +23,7 @@ export default (state) => {
   nodes.exampleUrl.textContent = i18n.t('exampleUrl');
   nodes.openFullArticle.textContent = i18n.t('openFullArticle');
   nodes.closeModalBtn.textContent = i18n.t('closeModalBtn');
+  nodes.createdBy.textContent = i18n.t('createdBy');
   printFeedback(state);
   if (state.items.length > 0) {
     const channelsTitle = document.getElementById('channelsTitle');

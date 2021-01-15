@@ -11,4 +11,5 @@ export default {
   modalBody: document.querySelector('.modal-body'),
   openFullArticle: document.querySelector('.open-full-article'),
   closeModalBtn: document.querySelector('.close-modal-btn'),
+  createdBy: document.querySelector('.created-by'),
 };

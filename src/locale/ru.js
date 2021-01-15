@@ -5,6 +5,7 @@ export default {
     submitBtn: 'Добавить',
     closeModalBtn: 'Закрыть',
     openFullArticle: 'Читать целиком',
+    createdBy: 'Автор',
     rss: {
       channelsTitle: 'Каналы',
       feedTitle: 'RSS Лента',
