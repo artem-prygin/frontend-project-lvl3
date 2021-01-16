@@ -20,7 +20,7 @@ export default () => {
         },
         string: {
           url: i18n.t('errors.url'),
-          notOneOf: i18n.t('errors.inTheList'),
+          notOneOf: i18n.t('errors.notOneOf'),
         },
       });
 
@@ -61,9 +61,9 @@ export default () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const url = formData.get('url');
-        const errors = validateForm({ url }, watcher);
-        if (errors) {
-          watcher.error = errors.url.type;
+        const error = validateForm(url, watcher);
+        if (error) {
+          watcher.error = error;
           watcher.formState = 'failure';
           return;
         }

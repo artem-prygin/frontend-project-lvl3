@@ -1,16 +1,12 @@
 import * as yup from 'yup';
-import _ from 'lodash';
 
-export default (fields, watcher) => {
-  const urls = watcher.channels.map(({ url }) => url);
-  const schema = yup.object().shape({
-    url: yup.string().url().required().notOneOf(urls),
-  });
-
+export default (link, watcher) => {
+  const currentUrls = watcher.channels.map(({ url }) => url);
+  const schema = yup.string().required().url().notOneOf(currentUrls);
   try {
-    schema.validateSync(fields, { abortEarly: false });
+    schema.validateSync(link);
     return null;
   } catch (e) {
-    return _.keyBy(e.inner, 'path');
+    return e.type;
   }
 };

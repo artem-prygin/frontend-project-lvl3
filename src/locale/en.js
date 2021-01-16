@@ -3,7 +3,6 @@ export default {
     description: 'Start reading RSS today! It is easy, it is nicely.',
     exampleUrl: 'Example',
     submitBtn: 'Add',
-    placeholder: 'Rss Link',
     closeModalBtn: 'Close',
     openFullArticle: 'Full Article',
     createdBy: 'Created by',
