@@ -8,44 +8,38 @@ const addIds = (items, channelID) => items.map((item) => (
   { ...item, id: _.uniqueId(), channelID }
 ));
 
-const addItems = (watcher, items, channelID) => {
-  const itemsWithID = addIds(items, channelID);
-  watcher.items = [...watcher.items, ...itemsWithID];
-};
-
 export const updateRss = (watcher) => {
-  const items = watcher.channels.flatMap(({ id: channelID, url }) => axios
+  const checkNewRss = watcher.rssChannels.forEach(({ id: channelID, url }) => axios
     .get(`${corsLink}${encodeURIComponent(url)}`)
     .then((res) => {
-      const { itemsData } = parser(res.data.contents);
-      const itemsDataWithIds = addIds(itemsData, channelID);
-      const { items: currentItems } = watcher;
-      watcher.items = _.unionBy(currentItems, itemsDataWithIds, 'link');
+      const { rssItems } = parser(res.data.contents);
+      const rssItemsWithIds = addIds(rssItems, channelID);
+      const currentRssItems = watcher.rssItems.filter((item) => item.channelID === channelID);
+      const newRssItems = _.xorBy(rssItemsWithIds, currentRssItems, 'link');
+      if (newRssItems.length > 0) {
+        watcher.rssItems.push(...newRssItems);
+      }
     })
     .catch(console.error));
 
-  Promise.all(items)
-    .then((res) => {
+  Promise.all([checkNewRss])
+    .then(() => {
       setTimeout(() => {
         updateRss(watcher);
       }, 5000);
-
-      if (res.length === 0) {
-        return;
-      }
-      watcher.lastRssUpdate = new Date();
     });
 };
 
 export const addRSS = (watcher, url, data) => {
-  const newWatcher = watcher;
   const channelID = _.uniqueId('channel');
-  newWatcher.channels.push({
+  watcher.rssChannels.push({
     id: channelID,
-    title: data.channelInfo.chTitle,
-    description: data.channelInfo.chDescription,
+    title: data.rssChannel.chTitle,
+    description: data.rssChannel.chDescription,
     url,
   });
-  newWatcher.currentChannelID = channelID;
-  addItems(newWatcher, data.itemsData, channelID);
+  watcher.currentRssChannelID = channelID;
+  const rssItems = data.rssItems.reverse();
+  const rssItemsWithID = addIds(rssItems, channelID);
+  watcher.rssItems = [...watcher.rssItems, ...rssItemsWithID];
 };

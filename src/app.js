@@ -6,6 +6,7 @@ import validateForm from './validation.js';
 import { corsLink, addRSS, updateRss } from './rssHandlers.js';
 import resources from './locale/translations.js';
 import parser from './parser.js';
+import constants from './constants.js';
 
 export default () => {
   i18n.init({
@@ -16,11 +17,11 @@ export default () => {
     .then(() => {
       yup.setLocale({
         mixed: {
-          required: i18n.t('errors.required'),
+          required: i18n.t(`errors.${constants.FIELD_IS_REQUIRED}`),
         },
         string: {
-          url: i18n.t('errors.url'),
-          notOneOf: i18n.t('errors.notOneOf'),
+          url: i18n.t(`errors.${constants.URL}`),
+          notOneOf: i18n.t(`errors.${constants.URL_IS_ALREADY_IN_THE_LIST}`),
         },
       });
 
@@ -41,21 +42,22 @@ export default () => {
       };
 
       const state = {
-        channels: [],
-        items: [],
-        currentChannelID: null,
+        rssChannels: [],
+        rssItems: [],
+        currentRssChannelID: null,
         formState: '',
-        lastRssUpdate: null,
         lng: i18n.language,
-        error: null,
+        errors: {
+          rssSearch: null,
+        },
       };
 
       const watcher = watchState(nodes, state);
-      watcher.formState = 'initializing';
+      watcher.formState = constants.INITIALIZING;
       updateRss(watcher);
 
       nodes.input.addEventListener('input', () => {
-        watcher.formState = 'filling';
+        watcher.formState = constants.FILLING;
       });
       nodes.form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -63,39 +65,36 @@ export default () => {
         const url = formData.get('url');
         const error = validateForm(url, watcher);
         if (error) {
-          watcher.error = error;
-          watcher.formState = 'failure';
+          watcher.errors.rssSearch = error;
+          watcher.formState = constants.FAILURE;
           return;
         }
 
-        watcher.formState = 'submitted';
+        watcher.formState = constants.SUBMITTED;
         axios.get(`${corsLink}${encodeURIComponent(url)}`)
           .then((res) => {
             const feed = parser(res.data.contents);
             addRSS(watcher, url, feed);
-            watcher.formState = 'success';
+            watcher.formState = constants.SUCCESS;
           })
           .catch((err) => {
-            console.error(err);
-            if (err.message === 'noRss') {
-              watcher.error = 'noRss';
-              watcher.formState = 'failure';
+            if (err.message === constants.URL_HAS_NO_RSS) {
+              watcher.errors.rssSearch = constants.URL_HAS_NO_RSS;
+              watcher.formState = constants.FAILURE;
               return;
             }
-            watcher.error = 'networkError';
-            watcher.formState = 'failure';
+            watcher.errors.rssSearch = constants.NETWORK_ERROR;
+            watcher.formState = constants.FAILURE;
           });
       });
 
       nodes.languages.forEach((lang) => {
-        lang.addEventListener('click', () => {
-          const active = document.querySelector('.language-active');
-          if (active === lang) {
+        lang.addEventListener('click', (e) => {
+          const { lng } = e.target.dataset;
+          if (watcher.lng === lng) {
             return;
           }
-          active.classList.remove('language-active');
-          lang.classList.add('language-active');
-          watcher.lng = lang.dataset.lng;
+          watcher.lng = lng;
         });
       });
     });

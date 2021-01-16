@@ -8,31 +8,32 @@ import {
   clearFields,
 } from './feedbackHandlers.js';
 import render from './render.js';
+import constants from './constants.js';
 
 const watchState = (nodes, state) => onChange(state, (path, value) => {
   if (path === 'lng') {
     i18n.changeLanguage(value);
     translate(nodes, state);
   }
-  if (path === 'lastRssUpdate') {
+  if (path === 'rssItems') {
     render(nodes, state);
   }
   if (path === 'formState') {
     switch (value) {
-      case 'initializing':
+      case constants.INITIALIZING:
         translate(nodes, state);
         break;
-      case 'filling':
+      case constants.FILLING:
         clearFields(nodes, state);
         break;
-      case 'submitted':
-        handleLoading(nodes, i18n.t('messages.loadingMsg'));
+      case constants.SUBMITTED:
+        handleLoading(nodes, i18n.t(`messages.${constants.RSS_IS_LOADING}`));
         break;
-      case 'success':
-        handleSuccess(nodes, state, i18n.t('messages.successMsg'));
+      case constants.SUCCESS:
+        handleSuccess(nodes, state, i18n.t(`messages.${constants.RSS_HAS_BEEN_LOADED}`));
         break;
-      case 'failure':
-        handleError(nodes, state, i18n.t(`errors.${state.error}`));
+      case constants.FAILURE:
+        handleError(nodes, state, i18n.t(`errors.${state.errors.rssSearch}`));
         break;
       default:
         break;

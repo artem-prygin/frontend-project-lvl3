@@ -38,5 +38,5 @@ export const clearFields = (nodes, state) => {
   nodes.feedbackField.classList.remove('text-success');
   nodes.feedbackField.textContent = '';
   enableNodes(nodes);
-  state.feedbackMsg = null;
+  state.errors.rssSearch = null;
 };

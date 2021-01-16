@@ -1,24 +1,31 @@
+import constants from './constants.js';
+
 export default (rss) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(rss, 'application/xml');
   const isValidRSS = data.querySelector('rss') !== null;
   if (!isValidRSS) {
-    throw new Error('noRss');
+    throw new Error(constants.URL_HAS_NO_RSS);
   }
-  const { textContent: chTitle } = data.querySelector('channel > title');
-  const { textContent: chDescription } = data.querySelector('channel > description');
-  const channelInfo = { chTitle, chDescription };
+  const chTitleNode = data.querySelector('channel > title');
+  const chTitle = chTitleNode.textContent;
+  const chDescriptionNode = data.querySelector('channel > description');
+  const chDescription = chDescriptionNode.textContent;
+  const rssChannel = { chTitle, chDescription };
   const items = data.querySelectorAll('item');
-  const itemsData = [...items].map((item) => {
-    const { textContent: title } = item.querySelector('title');
-    const { textContent: description } = item.querySelector('description');
-    const { textContent: link } = item.querySelector('link');
+  const rssItems = [...items].map((item) => {
+    const itemNode = item.querySelector('title');
+    const title = itemNode.textContent;
+    const descriptionNode = item.querySelector('description');
+    const description = descriptionNode.textContent;
+    const linkNode = item.querySelector('link');
+    const link = linkNode.textContent;
     return {
       title,
       description,
       link,
-      viewed: false,
+      isViewed: false,
     };
-  }).reverse();
-  return { channelInfo, itemsData };
+  });
+  return { rssChannel, rssItems };
 };
