@@ -14,7 +14,7 @@ export default {
     errors: {
       url: 'Введите валидный url',
       required: 'Поле обязательно для заполнения',
-      inTheList: 'Данный RSS-канал уже добавлен',
+      notOneOf: 'Данный RSS-канал уже добавлен',
       noRss: 'Данный ресурс не содержит RSS',
       networkError: 'Сеть недоступна',
     },

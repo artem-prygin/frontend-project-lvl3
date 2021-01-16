@@ -19,7 +19,7 @@ export default {
     errors: {
       url: 'Must be valid URL',
       required: 'This field is required',
-      inTheList: 'Channel is already in the list',
+      notOneOf: 'Rss already exists',
       noRss: 'This source doesn\'t contain valid rss',
       networkError: 'Network Error',
     },

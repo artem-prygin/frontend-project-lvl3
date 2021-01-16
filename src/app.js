@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import i18n from 'i18next';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -17,10 +16,11 @@ export default () => {
     .then(() => {
       yup.setLocale({
         mixed: {
-          required: i18n.t('feedbackMsg.required'),
+          required: i18n.t('errors.required'),
         },
         string: {
-          url: i18n.t('feedbackMsg.url'),
+          url: i18n.t('errors.url'),
+          notOneOf: i18n.t('errors.inTheList'),
         },
       });
 
@@ -61,16 +61,9 @@ export default () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const url = formData.get('url');
-        const errors = validateForm({ url });
-        if (!_.isEqual(errors, {})) {
+        const errors = validateForm({ url }, watcher);
+        if (errors) {
           watcher.error = errors.url.type;
-          watcher.formState = 'failure';
-          return;
-        }
-
-        const urlInTheList = watcher.channels.find((channel) => channel.url === url);
-        if (urlInTheList) {
-          watcher.error = 'inTheList';
           watcher.formState = 'failure';
           return;
         }
