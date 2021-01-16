@@ -1,7 +1,6 @@
 import i18n from 'i18next';
-import nodes from './DOMelements.js';
 
-const printFeedback = (state) => {
+const printFeedback = (nodes, state) => {
   switch (state.formState) {
     case 'failure':
       nodes.feedbackField.textContent = i18n.t(`errors.${state.error}`);
@@ -17,14 +16,14 @@ const printFeedback = (state) => {
   }
 };
 
-export default (state) => {
+export default (nodes, state) => {
   nodes.submitBtn.textContent = i18n.t('submitBtn');
   nodes.siteDescription.textContent = i18n.t('description');
   nodes.exampleUrl.textContent = i18n.t('exampleUrl');
   nodes.openFullArticle.textContent = i18n.t('openFullArticle');
   nodes.closeModalBtn.textContent = i18n.t('closeModalBtn');
   nodes.createdBy.textContent = i18n.t('createdBy');
-  printFeedback(state);
+  printFeedback(nodes, state);
   if (state.items.length > 0) {
     const channelsTitle = document.getElementById('channelsTitle');
     channelsTitle.textContent = i18n.t('rss.channelsTitle');
@@ -32,8 +31,7 @@ export default (state) => {
     feedTitle.textContent = i18n.t('rss.feedTitle');
     const openModalBtns = document.querySelectorAll('.modal-open');
     openModalBtns.forEach((btn) => {
-      const currentBtn = btn;
-      currentBtn.textContent = i18n.t('rss.openModalBtn');
+      btn.textContent = i18n.t('rss.openModalBtn');
     });
   }
 };

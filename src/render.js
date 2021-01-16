@@ -1,7 +1,6 @@
 import i18n from 'i18next';
-import nodes from './DOMelements.js';
 
-const setModalInfo = (item) => {
+const setModalInfo = (nodes, item) => {
   nodes.modalTitle.textContent = item.title;
   nodes.modalBody.innerHTML = item.description;
   nodes.openFullArticle.href = item.link;
@@ -42,31 +41,30 @@ const generateRssTemplate = (currentItems, channels, currentChannelID) => `
   </div>
 `;
 
-const clickOpenModalBtn = (state, render, btn) => {
+const clickOpenModalBtn = (nodes, state, render, btn) => {
   btn.addEventListener('click', () => {
     const { itemId } = btn.dataset;
     const item = state.items.find(({ id }) => id === itemId);
     const index = state.items.findIndex(({ id }) => id === itemId);
-    setModalInfo(item);
+    setModalInfo(nodes, item);
     if (!state.items[index].viewed) {
-      const newState = state;
-      newState.items[index].viewed = true;
-      render(newState);
+      state.items[index].viewed = true;
+      render(nodes, state);
     }
   });
 };
 
-const clickChannel = (state, render, channel) => {
+const clickChannel = (nodes, state, render, channel) => {
   channel.addEventListener('click', () => {
     if (state.currentChannelID !== channel.dataset.id) {
       const newState = state;
       newState.currentChannelID = channel.dataset.id;
-      render(newState);
+      render(nodes, newState);
     }
   });
 };
 
-const render = (state) => {
+const render = (nodes, state) => {
   const { currentChannelID, items, channels } = state;
   if (state.channels.length === 0) {
     nodes.rssWrapper.textContent = '';
@@ -79,10 +77,10 @@ const render = (state) => {
 
   const channelListNode = document.querySelector('.channels-list');
   const channelNodes = channelListNode.querySelectorAll('.list-group-item');
-  channelNodes.forEach((channel) => clickChannel(state, render, channel));
+  channelNodes.forEach((channel) => clickChannel(nodes, state, render, channel));
 
   const openModalBtns = document.querySelectorAll('button[data-target="#item-modal"]');
-  openModalBtns.forEach((btn) => clickOpenModalBtn(state, render, btn));
+  openModalBtns.forEach((btn) => clickOpenModalBtn(nodes, state, render, btn));
 };
 
 export default render;

@@ -10,19 +10,17 @@ const addIds = (items, channelID) => items.map((item) => (
 
 const addItems = (watcher, items, channelID) => {
   const itemsWithID = addIds(items, channelID);
-  const newWatcher = watcher;
-  newWatcher.items = [...watcher.items, ...itemsWithID];
+  watcher.items = [...watcher.items, ...itemsWithID];
 };
 
 export const updateRss = (watcher) => {
   const items = watcher.channels.flatMap(({ id: channelID, url }) => axios
     .get(`${corsLink}${encodeURIComponent(url)}`)
     .then((res) => {
-      const newWatcher = watcher;
       const { itemsData } = parser(res.data.contents);
       const itemsDataWithIds = addIds(itemsData, channelID);
-      const { items: currentItems } = newWatcher;
-      newWatcher.items = _.unionBy(currentItems, itemsDataWithIds, 'link');
+      const { items: currentItems } = watcher;
+      watcher.items = _.unionBy(currentItems, itemsDataWithIds, 'link');
     })
     .catch(console.error));
 
@@ -35,8 +33,7 @@ export const updateRss = (watcher) => {
       if (res.length === 0) {
         return;
       }
-      const newWatcher = watcher;
-      newWatcher.lastRssUpdate = new Date();
+      watcher.lastRssUpdate = new Date();
     });
 };
 

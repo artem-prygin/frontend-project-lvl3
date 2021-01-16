@@ -9,30 +9,30 @@ import {
 } from './feedbackHandlers.js';
 import render from './render.js';
 
-const watchState = (state) => onChange(state, (path, value) => {
+const watchState = (nodes, state) => onChange(state, (path, value) => {
   if (path === 'lng') {
     i18n.changeLanguage(value);
-    translate(state);
+    translate(nodes, state);
   }
   if (path === 'lastRssUpdate') {
-    render(state);
+    render(nodes, state);
   }
   if (path === 'formState') {
     switch (value) {
       case 'initializing':
-        translate(state);
+        translate(nodes, state);
         break;
       case 'filling':
-        clearFields(state);
+        clearFields(nodes, state);
         break;
       case 'submitted':
-        handleLoading(i18n.t('messages.loadingMsg'));
+        handleLoading(nodes, i18n.t('messages.loadingMsg'));
         break;
       case 'success':
-        handleSuccess(state, i18n.t('messages.successMsg'));
+        handleSuccess(nodes, state, i18n.t('messages.successMsg'));
         break;
       case 'failure':
-        handleError(state, i18n.t(`errors.${state.error}`));
+        handleError(nodes, state, i18n.t(`errors.${state.error}`));
         break;
       default:
         break;
