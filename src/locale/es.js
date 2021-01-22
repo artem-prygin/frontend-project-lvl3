@@ -2,27 +2,27 @@ import constants from '../constants.js';
 
 export default {
   translation: {
-    [constants.SITE_DESCRIPTION]: '¡Empiece a leer RSS hoy! Es simple, es hermoso.',
-    [constants.EXAMPLE_URL]: 'Ejemplo',
-    [constants.SUBMIT_BTN]: 'Añadir',
-    [constants.CLOSE_MODAL_BTN]: 'Cerrar',
-    [constants.OPEN_ARTICLE]: 'Leer completamente',
-    [constants.CREATED_BY]: 'Creado por',
+    [constants.textContent.SITE_DESCRIPTION]: '¡Empiece a leer RSS hoy! Es simple, es hermoso.',
+    [constants.textContent.EXAMPLE_URL]: 'Ejemplo',
+    [constants.textContent.SUBMIT_BTN]: 'Añadir',
+    [constants.textContent.CLOSE_MODAL_BTN]: 'Cerrar',
+    [constants.textContent.OPEN_ARTICLE]: 'Leer completamente',
+    [constants.textContent.CREATED_BY]: 'Creado por',
     rss: {
-      [constants.CHANNELS_TITLE]: 'Canales',
-      [constants.FEED_TITLE]: 'RSS Feed',
-      [constants.OPEN_MODAL_BTN]: 'Mirar',
+      [constants.textContent.CHANNELS_TITLE]: 'Canales',
+      [constants.textContent.FEED_TITLE]: 'RSS Feed',
+      [constants.textContent.OPEN_MODAL_BTN]: 'Mirar',
     },
     messages: {
-      [constants.RSS_HAS_BEEN_LOADED]: 'RSS se agregó exitosamente',
-      [constants.RSS_IS_LOADING]: 'Cargando...',
+      [constants.loadingMsg.RSS_HAS_BEEN_LOADED]: 'RSS se agregó exitosamente',
+      [constants.loadingMsg.RSS_IS_LOADING]: 'Cargando...',
     },
     errors: {
-      [constants.URL]: 'Ingrese una URL válida',
-      [constants.FIELD_IS_REQUIRED]: 'Requerido para llenar',
-      [constants.URL_IS_ALREADY_IN_THE_LIST]: 'Este feed RSS ya se ha agregado',
-      [constants.URL_HAS_NO_RSS]: 'Este recurso no contiene RSS',
-      [constants.NETWORK_ERROR]: 'Internet no está disponible',
+      [constants.formErrors.URL]: 'Ingrese una URL válida',
+      [constants.formErrors.FIELD_IS_REQUIRED]: 'Requerido para llenar',
+      [constants.formErrors.URL_IS_ALREADY_IN_THE_LIST]: 'Este feed RSS ya se ha agregado',
+      [constants.loadingErr.URL_HAS_NO_RSS]: 'Este recurso no contiene RSS',
+      [constants.loadingErr.NETWORK_ERROR]: 'Internet no está disponible',
     },
   },
 };

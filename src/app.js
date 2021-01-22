@@ -1,34 +1,77 @@
 import i18n from 'i18next';
 import * as yup from 'yup';
 import axios from 'axios';
+import _ from 'lodash';
 import watchState from './watcher.js';
 import validateForm from './validation.js';
-import { corsLink, addRSS, updateRss } from './rssHandlers.js';
 import resources from './locale/translations.js';
-import parser from './parser.js';
-import constants from './constants.js';
+import parse from './parser.js';
+import c from './constants.js';
+import translate from './translation.js';
+
+const corsLink = 'https://hexlet-allorigins.herokuapp.com/get?url=';
+const RSS_TIMEOUT = 5000;
+
+const addIds = (items, channelID) => items.map((item) => (
+  { ...item, id: _.uniqueId(), channelID }
+));
+
+export const updateRss = (watcher) => {
+  const rssPromises = watcher.rssChannels.map(({ id: channelID, url }) => axios
+    .get(`${corsLink}${encodeURIComponent(url)}`)
+    .then((res) => {
+      const { rssItems } = parse(res.data.contents);
+      const currentRssItems = watcher.rssItems.filter((item) => item.channelID === channelID);
+      const currentLinks = currentRssItems.map(({ link }) => link);
+      const newRssItems = rssItems.filter(({ link }) => !currentLinks.includes(link));
+      const newItemsWithIds = addIds(newRssItems, channelID);
+      watcher.rssItems.unshift(...newItemsWithIds);
+    })
+    .catch(console.error));
+
+  Promise.all(rssPromises)
+    .finally(() => {
+      setTimeout(() => {
+        updateRss(watcher);
+      }, RSS_TIMEOUT);
+    });
+};
+
+export const addRSS = (state, url, data) => {
+  const channelID = _.uniqueId('channel');
+  state.rssChannels.push({
+    id: channelID,
+    title: data.rssChannel.chTitle,
+    description: data.rssChannel.chDescription,
+    url,
+  });
+  state.currentRssChannelID = channelID;
+  const { rssItems } = data;
+  const rssItemsWithID = addIds(rssItems, channelID);
+  state.rssItems.push(...rssItemsWithID);
+};
 
 export default () => {
   i18n.init({
     lng: 'en',
-    debug: false,
+    debug: true,
     resources,
   })
     .then(() => {
       yup.setLocale({
         mixed: {
-          required: i18n.t(`errors.${constants.FIELD_IS_REQUIRED}`),
+          required: i18n.t(`errors.${c.formErrors.FIELD_IS_REQUIRED}`),
         },
         string: {
-          url: i18n.t(`errors.${constants.URL}`),
-          notOneOf: i18n.t(`errors.${constants.URL_IS_ALREADY_IN_THE_LIST}`),
+          url: i18n.t(`errors.${c.formErrors.URL}`),
+          notOneOf: i18n.t(`errors.${c.formErrors.URL_IS_ALREADY_IN_THE_LIST}`),
         },
       });
 
       const nodes = {
         rssWrapper: document.querySelector('.rss-wrapper'),
         form: document.querySelector('form'),
-        input: document.querySelector('input[type="url"]'),
+        input: document.querySelector('input[name="url"]'),
         languages: document.querySelectorAll('.language'),
         submitBtn: document.querySelector('button[type="submit"]'),
         siteDescription: document.querySelector('.site-description'),
@@ -44,50 +87,61 @@ export default () => {
       const state = {
         rssChannels: [],
         rssItems: [],
+        viewedRssItems: new Set(),
+        loading: {
+          status: c.status.IDLE,
+          error: null,
+        },
         currentRssChannelID: null,
-        formState: '',
         lng: i18n.language,
-        errors: {
-          rssSearch: null,
+        form: {
+          status: c.status.IDLE,
+          isValid: false,
+          error: null,
         },
       };
-
-      const watcher = watchState(nodes, state);
-      watcher.formState = constants.INITIALIZING;
+      translate(nodes, state);
+      const watcher = watchState(state, nodes);
       updateRss(watcher);
 
       nodes.input.addEventListener('input', () => {
-        watcher.formState = constants.FILLING;
+        watcher.form.status = c.status.FILLING;
       });
       nodes.form.addEventListener('submit', (e) => {
         e.preventDefault();
+        watcher.loading.status = c.status.IN_PROCESS;
+        watcher.form.status = c.status.DISABLED;
         const formData = new FormData(e.target);
         const url = formData.get('url');
         const error = validateForm(url, watcher);
         if (error) {
-          watcher.errors.rssSearch = error;
-          watcher.formState = constants.FAILURE;
+          watcher.form.isValid = false;
+          watcher.form.error = error;
+          watcher.form.status = c.status.SUBMITTED;
+          watcher.loading.status = c.status.IDLE;
           return;
         }
+        watcher.form.isValid = true;
+        watcher.form.error = null;
+        watcher.form.status = c.status.SUBMITTED;
 
-        watcher.formState = constants.SUBMITTED;
         axios.get(`${corsLink}${encodeURIComponent(url)}`)
           .then((res) => {
-            const feed = parser(res.data.contents);
-            addRSS(watcher, url, feed);
-            watcher.formState = constants.SUCCESS;
+            const feed = parse(res.data.contents);
+            addRSS(state, url, feed);
+            watcher.loading.error = null;
+            watcher.loading.status = c.status.SUCCESS;
           })
           .catch((err) => {
-            if (err.message === constants.URL_HAS_NO_RSS) {
-              watcher.errors.rssSearch = constants.URL_HAS_NO_RSS;
-              watcher.formState = constants.FAILURE;
+            if (err.message === c.loadingErr.URL_HAS_NO_RSS) {
+              watcher.loading.error = c.loadingErr.URL_HAS_NO_RSS;
+              watcher.loading.status = c.status.FAILURE;
               return;
             }
-            watcher.errors.rssSearch = constants.NETWORK_ERROR;
-            watcher.formState = constants.FAILURE;
+            watcher.loading.error = c.loadingErr.NETWORK_ERROR;
+            watcher.loading.status = c.status.FAILURE;
           });
       });
-
       nodes.languages.forEach((lang) => {
         lang.addEventListener('click', (e) => {
           const { lng } = e.target.dataset;
@@ -97,5 +151,6 @@ export default () => {
           watcher.lng = lng;
         });
       });
-    });
+    })
+    .catch(console.error);
 };

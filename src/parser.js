@@ -5,7 +5,7 @@ export default (rss) => {
   const data = parser.parseFromString(rss, 'application/xml');
   const isValidRSS = data.querySelector('rss') !== null;
   if (!isValidRSS) {
-    throw new Error(constants.URL_HAS_NO_RSS);
+    throw new Error(constants.loadingErr.URL_HAS_NO_RSS);
   }
   const chTitleNode = data.querySelector('channel > title');
   const chTitle = chTitleNode.textContent;
@@ -24,7 +24,6 @@ export default (rss) => {
       title,
       description,
       link,
-      isViewed: false,
     };
   });
   return { rssChannel, rssItems };
