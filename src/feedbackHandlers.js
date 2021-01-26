@@ -1,6 +1,11 @@
 import i18n from 'i18next';
-import render from './render.js';
-import c from './constants.js';
+import { render } from './render.js';
+import { loadingMsg, status } from './constants.js';
+
+const disableFormNodes = (nodes) => {
+  nodes.submitBtn.setAttribute('disabled', 'disabled');
+  nodes.input.setAttribute('readonly', 'readonly');
+};
 
 const enableFormNodes = (nodes) => {
   nodes.input.removeAttribute('readonly');
@@ -28,12 +33,11 @@ const setSuccessStyles = (nodes) => {
 };
 
 export const handleForm = (nodes, state) => {
-  if (state.form.status === c.status.DISABLED) {
-    nodes.submitBtn.setAttribute('disabled', 'disabled');
-    nodes.input.setAttribute('readonly', 'readonly');
+  if (state.form.status === status.DISABLED) {
+    disableFormNodes(nodes);
     return;
   }
-  if (state.form.status === c.status.FILLING) {
+  if (state.form.status === status.FILLING) {
     clearFields(nodes);
     return;
   }
@@ -47,25 +51,28 @@ export const handleForm = (nodes, state) => {
 };
 
 export const handleLoading = (nodes, state) => {
-  enableFormNodes(nodes);
   switch (state.loading.status) {
-    case c.status.IDLE:
+    case status.IDLE:
       render(nodes, state);
+      enableFormNodes(nodes);
       break;
-    case c.status.IN_PROCESS:
+    case status.IN_PROCESS:
+      disableFormNodes(nodes);
       nodes.rssWrapper.innerHTML = '<img src="https://i.gifer.com/embedded/download/9T0I.gif" alt="loading">';
       nodes.feedbackField.classList.remove('text-danger', 'text-success');
-      nodes.feedbackField.textContent = i18n.t(`messages.${c.loadingMsg.RSS_IS_LOADING}`);
+      nodes.feedbackField.textContent = i18n.t(`messages.${loadingMsg.RSS_IS_LOADING}`);
       break;
-    case c.status.FAILURE:
+    case status.FAILURE:
       nodes.feedbackField.textContent = i18n.t(`errors.${state.loading.error}`);
       setErrorStyles(nodes);
       render(nodes, state);
+      enableFormNodes(nodes);
       break;
-    case c.status.SUCCESS:
-      nodes.feedbackField.textContent = i18n.t(`messages.${c.loadingMsg.RSS_HAS_BEEN_LOADED}`);
+    case status.SUCCESS:
+      nodes.feedbackField.textContent = i18n.t(`messages.${loadingMsg.RSS_HAS_BEEN_LOADED}`);
       setSuccessStyles(nodes);
       render(nodes, state);
+      enableFormNodes(nodes);
       break;
     default:
       break;

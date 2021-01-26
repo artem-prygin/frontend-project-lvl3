@@ -1,11 +1,11 @@
-import constants from './constants.js';
+import { loadingErr } from './constants.js';
 
 export default (rss) => {
   const parser = new DOMParser();
   const data = parser.parseFromString(rss, 'application/xml');
-  const isValidRSS = data.querySelector('rss') !== null;
+  const isValidRSS = data.querySelector('parsererror') === null;
   if (!isValidRSS) {
-    throw new Error(constants.loadingErr.URL_HAS_NO_RSS);
+    throw new Error(loadingErr.URL_HAS_NO_RSS);
   }
   const chTitleNode = data.querySelector('channel > title');
   const chTitle = chTitleNode.textContent;

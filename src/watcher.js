@@ -2,7 +2,7 @@ import i18n from 'i18next';
 import onChange from 'on-change';
 import translate from './translation.js';
 import { handleLoading, handleForm } from './feedbackHandlers.js';
-import render from './render.js';
+import { render, renderItems, renderModal } from './render.js';
 
 const watchState = (state, nodes) => onChange(state, (path, value) => {
   switch (path) {
@@ -19,10 +19,14 @@ const watchState = (state, nodes) => onChange(state, (path, value) => {
       handleLoading(nodes, state);
       break;
     case 'rssChannels':
-    case 'rssItems':
     case 'currentRssChannelID':
-    case 'viewedRssItems':
-      render(nodes, watchState(state, nodes));
+      render(nodes, state);
+      break;
+    case 'rssItems':
+      renderItems(nodes, state);
+      break;
+    case 'openedItemId':
+      renderModal(nodes, state);
       break;
     default:
       break;
