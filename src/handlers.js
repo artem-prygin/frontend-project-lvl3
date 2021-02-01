@@ -20,7 +20,7 @@ const generateItemsList = (state, items) => items.map(({ id, title }) => {
   const btnClass = isViewed ? 'btn-secondary' : 'btn-primary ';
   return `<li class="list-group-item d-flex justify-content-between align-items-start">
     <h5 class="${fontWeightClass}">${title}</h5>
-    <button class="btn ${btnClass} modal-open flex-shrink-0" data-post-id="${id}"
+    <button class="btn ${btnClass} modal-open flex-shrink-0" data-post-id="${id}" role="button"
         data-toggle="modal" data-target="#item-modal">${i18n.t(`rss.${textContent.OPEN_MODAL_BTN}`)}</button>
   </li>`;
 }).join('');
