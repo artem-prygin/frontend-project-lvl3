@@ -26,12 +26,16 @@ export const formErr = {
   URL: 'url',
 };
 
-export const status = {
+export const formStatus = {
   IDLE: 'idle',
-  IN_PROCESS: 'inProcess',
   FILLING: 'filling',
-  DISABLED: 'disabled',
   FAILURE: 'failure',
   SUBMITTED: 'submitted',
+};
+
+export const loadingStatus = {
+  IDLE: 'idle',
+  IN_PROCESS: 'inProcess',
+  FAILURE: 'failure',
   SUCCESS: 'success',
 };

@@ -1,8 +1,13 @@
 import i18n from 'i18next';
 import onChange from 'on-change';
 import translate from './translation.js';
-import { handleLoading, handleForm } from './feedbackHandlers.js';
-import { render, renderItems, renderModal } from './render.js';
+import {
+  handleLoading,
+  handleForm,
+  handleRSS,
+  handlePosts,
+  handleModal,
+} from './handlers.js';
 
 const watchState = (state, nodes) => onChange(state, (path, value) => {
   switch (path) {
@@ -18,15 +23,16 @@ const watchState = (state, nodes) => onChange(state, (path, value) => {
     case 'loading.status':
       handleLoading(nodes, state);
       break;
-    case 'rssChannels':
-    case 'currentRssChannelID':
-      render(nodes, state);
+    case 'channels':
+    case 'currentChannelID':
+      handleRSS(nodes, state);
       break;
-    case 'rssItems':
-      renderItems(nodes, state);
+    case 'posts':
+    case 'viewedPosts':
+      handlePosts(nodes, state);
       break;
-    case 'openedItemId':
-      renderModal(nodes, state);
+    case 'openedPostId':
+      handleModal(nodes, state);
       break;
     default:
       break;

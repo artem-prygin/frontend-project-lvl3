@@ -3,32 +3,45 @@ import * as yup from 'yup';
 import axios from 'axios';
 import _ from 'lodash';
 import watchState from './watcher.js';
-import validateForm from './validation.js';
 import resources from './locale/translations.js';
 import parse from './parser.js';
-import { loadingErr, formErr, status } from './constants.js';
+import {
+  loadingErr,
+  formErr,
+  formStatus,
+  loadingStatus,
+} from './constants.js';
 import translate from './translation.js';
 
-const corsLink = 'https://hexlet-allorigins.herokuapp.com/get?url=';
+const corsLink = 'https://hexlet-allorigins.herokuapp.com/';
+const corsUrl = new URL('get', corsLink);
+corsUrl.searchParams.set('disableCache', 'true');
 const RSS_TIMEOUT = 5000;
 
-const addIds = (items, id, channelID) => items.map((item, i) => (
-  { ...item, id: id + i, channelID }
-));
-
-const compareItems = (oldItems, newItems) => oldItems.link === newItems.link;
+const validateForm = (link, watcher) => {
+  const currentUrls = watcher.channels.map(({ url }) => url);
+  const schema = yup.string().required().url().notOneOf(currentUrls);
+  try {
+    schema.validateSync(link);
+    return null;
+  } catch (e) {
+    return e.type;
+  }
+};
 
 export const updateRss = (watcher) => {
-  const rssPromises = watcher.rssChannels.map(({ id: channelID, url }) => axios
-    .get(`${corsLink}${encodeURIComponent(url)}`)
-    .then((res) => {
-      const { rssItems } = parse(res.data.contents);
-      const currentRssItems = watcher.rssItems.filter((item) => item.channelID === channelID);
-      const newRssItems = _.differenceWith(rssItems, currentRssItems, compareItems);
-      const newItemsWithIds = addIds(newRssItems, _.uniqueId(), channelID);
-      watcher.rssItems.unshift(...newItemsWithIds);
-    })
-    .catch(console.error));
+  const rssPromises = watcher.channels.map(({ id: channelID, url }) => {
+    corsUrl.searchParams.set('url', url);
+    return axios.get(corsUrl)
+      .then((res) => {
+        const { posts } = parse(res.data.contents);
+        const currentPosts = watcher.posts.filter((item) => item.channelID === channelID);
+        const newPosts = _.differenceWith(posts, currentPosts, (a, b) => a.link === b.link);
+        const newItemsWithIds = newPosts.map((item) => ({ ...item, id: _.uniqueId(), channelID }));
+        watcher.posts.unshift(...newItemsWithIds);
+      })
+      .catch(console.log);
+  });
 
   Promise.all(rssPromises)
     .finally(() => {
@@ -39,28 +52,29 @@ export const updateRss = (watcher) => {
 };
 
 export const addRSS = (watcher, url) => {
-  axios.get(`${corsLink}${encodeURIComponent(url)}`)
+  watcher.loading.status = loadingStatus.IN_PROCESS;
+  corsUrl.searchParams.set('url', url);
+  axios.get(corsUrl)
     .then((res) => {
-      const feed = parse(res.data.contents);
+      const { posts, channel } = parse(res.data.contents);
       const channelID = _.uniqueId('channel');
-      watcher.rssChannels.push({
+      watcher.channels.push({
         id: channelID,
-        title: feed.rssChannel.chTitle,
-        description: feed.rssChannel.chDescription,
+        title: channel.channelTitle,
+        description: channel.channelDescription,
         url,
       });
-      watcher.currentRssChannelID = channelID;
-      const { rssItems } = feed;
-      const rssItemsWithID = addIds(rssItems, _.uniqueId(), channelID);
-      watcher.rssItems.push(...rssItemsWithID);
+      watcher.currentChannelID = channelID;
+      const postsWithID = posts.map((item) => ({ ...item, id: _.uniqueId(), channelID }));
+      watcher.posts.push(...postsWithID);
       watcher.loading.error = null;
-      watcher.loading.status = status.SUCCESS;
+      watcher.loading.status = loadingStatus.SUCCESS;
     })
     .catch((err) => {
       watcher.loading.error = err.message === loadingErr.URL_HAS_NO_RSS
         ? loadingErr.URL_HAS_NO_RSS
         : loadingErr.NETWORK_ERROR;
-      watcher.loading.status = status.FAILURE;
+      watcher.loading.status = loadingStatus.FAILURE;
     });
 };
 
@@ -83,6 +97,7 @@ export default () => {
 
       const nodes = {
         rssWrapper: document.querySelector('.rss-wrapper'),
+        loadingWrapper: document.querySelector('.loading-wrapper'),
         form: document.querySelector('form'),
         input: document.querySelector('input[name="url"]'),
         languages: document.querySelectorAll('.language'),
@@ -98,18 +113,18 @@ export default () => {
       };
 
       const state = {
-        rssChannels: [],
-        rssItems: [],
-        viewedRssItems: new Set(),
-        openedItemId: null,
+        channels: [],
+        posts: [],
+        viewedPosts: new Set(),
+        openedPostId: null,
         loading: {
-          status: status.IDLE,
+          status: loadingStatus.IDLE,
           error: null,
         },
-        currentRssChannelID: null,
+        currentChannelID: null,
         lng: i18n.language,
         form: {
-          status: status.IDLE,
+          status: formStatus.IDLE,
           isValid: false,
           error: null,
         },
@@ -120,33 +135,30 @@ export default () => {
       updateRss(watcher);
 
       nodes.input.addEventListener('input', () => {
-        watcher.form.status = status.FILLING;
+        watcher.form.status = formStatus.FILLING;
       });
       nodes.form.addEventListener('submit', (e) => {
         e.preventDefault();
-        watcher.loading.status = status.IN_PROCESS;
-        watcher.form.status = status.DISABLED;
+        watcher.form.status = formStatus.DISABLED;
         const formData = new FormData(e.target);
         const url = formData.get('url');
         const error = validateForm(url, watcher);
         if (error) {
           watcher.form.isValid = false;
           watcher.form.error = error;
-          watcher.form.status = status.SUBMITTED;
-          watcher.loading.status = status.IDLE;
-          return;
+          watcher.form.status = formStatus.FAILURE;
+        } else {
+          watcher.form.isValid = true;
+          watcher.form.error = null;
+          watcher.form.status = formStatus.SUBMITTED;
+          addRSS(watcher, url);
         }
-
-        watcher.form.isValid = true;
-        watcher.form.error = null;
-        watcher.form.status = status.SUBMITTED;
-        addRSS(watcher, url);
       });
 
       nodes.languages.forEach((lang) => {
         lang.addEventListener('click', (e) => {
           const { lng } = e.target.dataset;
-          if (watcher.lng !== lng) {
+          if (lng && watcher.lng !== lng) {
             watcher.lng = lng;
           }
         });
@@ -154,15 +166,17 @@ export default () => {
 
       nodes.rssWrapper.addEventListener('click', (e) => {
         const channelNode = e.composedPath().find((el) => el.dataset && el.dataset.channelId);
-        if (channelNode && watcher.currentRssChannelID !== channelNode.dataset.channelId) {
-          watcher.currentRssChannelID = channelNode.dataset.channelId;
-          return;
+        if (channelNode && watcher.currentChannelID !== channelNode.dataset.channelId) {
+          watcher.currentChannelID = channelNode.dataset.channelId;
         }
-        const itemBtnNode = e.composedPath().find((el) => el.dataset && el.dataset.itemId);
-        if (itemBtnNode) {
-          const currentItemId = itemBtnNode.dataset.itemId;
-          watcher.viewedRssItems.add(currentItemId);
-          watcher.openedItemId = currentItemId;
+      });
+
+      nodes.rssWrapper.addEventListener('click', (e) => {
+        const postBtnNode = e.composedPath().find((el) => el.dataset && el.dataset.postId);
+        if (postBtnNode) {
+          const currentPostId = postBtnNode.dataset.postId;
+          watcher.viewedPosts.add(currentPostId);
+          watcher.openedPostId = currentPostId;
         }
       });
     })

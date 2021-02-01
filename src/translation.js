@@ -1,8 +1,13 @@
 import i18n from 'i18next';
-import { textContent, status, loadingMsg } from './constants.js';
+import {
+  textContent,
+  loadingMsg,
+  formStatus,
+  loadingStatus,
+} from './constants.js';
 
 const printFeedback = (nodes, state) => {
-  if (state.form.status === status.IDLE) {
+  if (state.form.status === formStatus.IDLE) {
     nodes.feedbackField.textContent = '';
     return;
   }
@@ -11,13 +16,13 @@ const printFeedback = (nodes, state) => {
     return;
   }
   switch (state.loading.status) {
-    case status.IN_PROCESS:
+    case loadingStatus.IN_PROCESS:
       nodes.feedbackField.textContent = i18n.t(`messages.${loadingMsg.RSS_IS_LOADING}`);
       break;
-    case status.FAILURE:
+    case loadingStatus.FAILURE:
       nodes.feedbackField.textContent = i18n.t(`errors.${state.loading.error}`);
       break;
-    case status.SUCCESS:
+    case loadingStatus.SUCCESS:
       nodes.feedbackField.textContent = i18n.t(`messages.${loadingMsg.RSS_HAS_BEEN_LOADED}`);
       break;
     default:
@@ -40,7 +45,7 @@ export default (nodes, state) => {
   nodes.createdBy.textContent = i18n.t(textContent.CREATED_BY);
   setFlagsStyles(nodes, state);
   printFeedback(nodes, state);
-  if (state.rssItems.length > 0) {
+  if (state.posts.length > 0) {
     const channelsTitle = document.getElementById('channelsTitle');
     channelsTitle.textContent = i18n.t(`rss.${textContent.CHANNELS_TITLE}`);
     const feedTitle = document.getElementById('feedTitle');

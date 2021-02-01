@@ -7,13 +7,13 @@ export default (rss) => {
   if (!isValidRSS) {
     throw new Error(loadingErr.URL_HAS_NO_RSS);
   }
-  const chTitleNode = data.querySelector('channel > title');
-  const chTitle = chTitleNode.textContent;
-  const chDescriptionNode = data.querySelector('channel > description');
-  const chDescription = chDescriptionNode.textContent;
-  const rssChannel = { chTitle, chDescription };
+  const channelTitleNode = data.querySelector('channel > title');
+  const channelTitle = channelTitleNode.textContent;
+  const channelDescriptionNode = data.querySelector('channel > description');
+  const channelDescription = channelDescriptionNode.textContent;
+  const channel = { channelTitle, channelDescription };
   const items = data.querySelectorAll('item');
-  const rssItems = [...items].map((item) => {
+  const posts = [...items].map((item) => {
     const itemNode = item.querySelector('title');
     const title = itemNode.textContent;
     const descriptionNode = item.querySelector('description');
@@ -26,5 +26,5 @@ export default (rss) => {
       link,
     };
   });
-  return { rssChannel, rssItems };
+  return { channel, posts };
 };
