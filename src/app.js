@@ -16,7 +16,7 @@ const addProxy = (url) => {
   const corsUrl = new URL('get', corsLink);
   corsUrl.searchParams.set('disableCache', 'true');
   corsUrl.searchParams.set('url', url);
-  return corsUrl;
+  return corsUrl.toString();
 };
 
 const validateForm = (link, watcher) => {
