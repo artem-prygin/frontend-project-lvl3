@@ -48,7 +48,7 @@ export default (nodes, state) => {
   if (state.posts.length > 0) {
     const channelsTitle = document.getElementById('channelsTitle');
     channelsTitle.textContent = i18n.t(`rss.${textContent.CHANNELS_TITLE}`);
-    const feedTitle = document.getElementById('feedTitle');
+    const feedTitle = document.getElementById('postsTitle');
     feedTitle.textContent = i18n.t(`rss.${textContent.FEED_TITLE}`);
     const openModalBtns = document.querySelectorAll('.modal-open');
     openModalBtns.forEach((btn) => {

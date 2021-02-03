@@ -4,7 +4,7 @@ import translate from './translation.js';
 import {
   handleLoading,
   handleForm,
-  handleRSS,
+  handleChannels,
   handlePosts,
   handleModal,
 } from './handlers.js';
@@ -25,7 +25,7 @@ const watchState = (state, nodes) => onChange(state, (path, value) => {
       break;
     case 'channels':
     case 'currentChannelID':
-      handleRSS(nodes, state);
+      handleChannels(nodes, state);
       break;
     case 'posts':
     case 'viewedPosts':
