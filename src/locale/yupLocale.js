@@ -5,7 +5,7 @@ export default {
     required: formErr.FIELD_IS_REQUIRED,
   },
   string: {
-    url: formErr.URL,
+    url: formErr.INVALID_URL,
     notOneOf: formErr.URL_IS_ALREADY_IN_THE_LIST,
   },
 };

@@ -23,7 +23,7 @@ export const loadingErr = {
 export const formErr = {
   URL_IS_ALREADY_IN_THE_LIST: 'notOneOf',
   FIELD_IS_REQUIRED: 'required',
-  URL: 'url',
+  INVALID_URL: 'url',
 };
 
 export const formStatus = {

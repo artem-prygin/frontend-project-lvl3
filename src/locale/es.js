@@ -23,7 +23,7 @@ export default {
       [loadingMsg.RSS_IS_LOADING]: 'Cargando...',
     },
     errors: {
-      [formErr.URL]: 'Ingrese una URL válida',
+      [formErr.INVALID_URL]: 'Ingrese una URL válida',
       [formErr.FIELD_IS_REQUIRED]: 'Requerido para llenar',
       [formErr.URL_IS_ALREADY_IN_THE_LIST]: 'Este feed RSS ya se ha agregado',
       [loadingErr.URL_HAS_NO_RSS]: 'Este recurso no contiene RSS',

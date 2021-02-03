@@ -23,7 +23,7 @@ export default {
       [loadingMsg.RSS_IS_LOADING]: 'Loading...',
     },
     errors: {
-      [formErr.URL]: 'Must be valid URL',
+      [formErr.INVALID_URL]: 'Must be valid URL',
       [formErr.FIELD_IS_REQUIRED]: 'This field is required',
       [formErr.URL_IS_ALREADY_IN_THE_LIST]: 'Rss already exists',
       [loadingErr.URL_HAS_NO_RSS]: 'This source doesn\'t contain valid rss',

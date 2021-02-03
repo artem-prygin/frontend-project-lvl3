@@ -23,7 +23,7 @@ export default {
       [loadingMsg.RSS_IS_LOADING]: 'Загрузка...',
     },
     errors: {
-      [formErr.URL]: 'Введите валидный url',
+      [formErr.INVALID_URL]: 'Введите валидный url',
       [formErr.FIELD_IS_REQUIRED]: 'Поле обязательно для заполнения',
       [formErr.URL_IS_ALREADY_IN_THE_LIST]: 'Данный RSS-канал уже добавлен',
       [loadingErr.URL_HAS_NO_RSS]: 'Данный ресурс не содержит RSS',
