@@ -16,7 +16,7 @@ const addProxy = (url) => {
   const corsUrl = new URL('get', corsLink);
   corsUrl.searchParams.set('disableCache', 'true');
   corsUrl.searchParams.set('url', url);
-  return corsUrl;
+  return corsUrl.toString();
 };
 
 const validateForm = (link, watcher) => {
@@ -133,6 +133,7 @@ export default () => i18n
     });
     nodes.form.addEventListener('submit', (e) => {
       e.preventDefault();
+      watcher.loading.status = loadingStatus.IDLE;
       const formData = new FormData(e.target);
       const url = formData.get('url');
       const error = validateForm(url, watcher);
@@ -158,16 +159,17 @@ export default () => i18n
     });
 
     nodes.channelsWrapper.addEventListener('click', (e) => {
-      if (e.target.dataset.channelId) {
-        watcher.currentChannelID = e.target.dataset.channelId;
+      const { channelId } = e.target.dataset;
+      if (channelId) {
+        watcher.currentChannelID = channelId;
       }
     });
 
     nodes.postsWrapper.addEventListener('click', (e) => {
-      if (e.target.dataset.postId) {
-        const currentPostId = e.target.dataset.postId;
-        watcher.viewedPosts.add(currentPostId);
-        watcher.openedPostId = currentPostId;
+      const { postId } = e.target.dataset;
+      if (postId) {
+        watcher.viewedPosts.add(postId);
+        watcher.openedPostId = postId;
       }
     });
   })
