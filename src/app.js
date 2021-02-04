@@ -1,3 +1,4 @@
+/* eslint no-param-reassign: 0 */
 import i18n from 'i18next';
 import * as yup from 'yup';
 import axios from 'axios';
@@ -6,8 +7,12 @@ import watchState from './watcher.js';
 import resources from './locale/translations.js';
 import yupLocale from './locale/yupLocale.js';
 import parse from './parser.js';
-import { loadingErr, formStatus, loadingStatus } from './constants.js';
-import translate from './translation.js';
+import {
+  loadingErr,
+  formStatus,
+  loadingStatus,
+  textContent,
+} from './constants.js';
 
 const RSS_TIMEOUT = 5000;
 
@@ -19,11 +24,10 @@ const addProxy = (url) => {
   return corsUrl.toString();
 };
 
-const validateForm = (link, watcher) => {
-  const currentUrls = watcher.channels.map(({ url }) => url);
+const validateForm = (url, currentUrls) => {
   const schema = yup.string().required().url().notOneOf(currentUrls);
   try {
-    schema.validateSync(link);
+    schema.validateSync(url);
     return null;
   } catch (e) {
     return e.type;
@@ -106,6 +110,13 @@ export default () => i18n
       createdBy: document.querySelector('.created-by'),
     };
 
+    nodes.siteDescription.setAttribute('data-i18n', textContent.SITE_DESCRIPTION);
+    nodes.submitBtn.setAttribute('data-i18n', textContent.SUBMIT_BTN);
+    nodes.exampleUrl.setAttribute('data-i18n', textContent.EXAMPLE_URL);
+    nodes.openFullArticle.setAttribute('data-i18n', textContent.OPEN_ARTICLE);
+    nodes.closeModalBtn.setAttribute('data-i18n', textContent.CLOSE_MODAL_BTN);
+    nodes.createdBy.setAttribute('data-i18n', textContent.CREATED_BY);
+
     const state = {
       channels: [],
       posts: [],
@@ -116,7 +127,7 @@ export default () => i18n
         error: null,
       },
       currentChannelID: null,
-      lng: i18n.language,
+      lng: null,
       form: {
         status: formStatus.IDLE,
         isValid: false,
@@ -124,8 +135,8 @@ export default () => i18n
       },
     };
 
-    translate(nodes, state);
     const watcher = watchState(state, nodes);
+    watcher.lng = i18n.language;
     updateRss(watcher);
 
     nodes.input.addEventListener('input', () => {
@@ -135,8 +146,9 @@ export default () => i18n
       e.preventDefault();
       watcher.loading.status = loadingStatus.IDLE;
       const formData = new FormData(e.target);
-      const url = formData.get('url');
-      const error = validateForm(url, watcher);
+      const newUrl = formData.get('url');
+      const currentUrls = watcher.channels.map(({ url }) => url);
+      const error = validateForm(newUrl, currentUrls);
       if (error) {
         watcher.form.isValid = false;
         watcher.form.error = error;
@@ -145,12 +157,14 @@ export default () => i18n
         watcher.form.isValid = true;
         watcher.form.error = null;
         watcher.form.status = formStatus.SUBMITTED;
-        addRSS(watcher, url);
+        addRSS(watcher, newUrl);
       }
     });
 
     nodes.languages.forEach((lang) => {
       lang.addEventListener('click', (e) => {
+        nodes.languages.forEach((node) => node.classList.remove('language-active'));
+        e.target.classList.add('language-active');
         const { lng } = e.target.dataset;
         if (lng && watcher.lng !== lng) {
           watcher.lng = lng;

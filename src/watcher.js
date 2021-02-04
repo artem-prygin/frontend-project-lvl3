@@ -1,21 +1,19 @@
 import i18n from 'i18next';
 import onChange from 'on-change';
-import translate from './translation.js';
 import {
   handleLoading,
   handleForm,
   handleChannels,
   handlePosts,
   handleModal,
+  handleLocalization,
 } from './handlers.js';
 
 const watchState = (state, nodes) => onChange(state, (path, value) => {
   switch (path) {
     case 'lng':
       i18n.changeLanguage(value)
-        .then(() => {
-          translate(nodes, state);
-        });
+        .then(() => handleLocalization());
       break;
     case 'form.status':
       handleForm(nodes, state);
